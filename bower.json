@@ -1,0 +1,22 @@
+{
+  "name": "starfighter",
+  "version": "1.0.0",
+  "authors": [
+    "rex whitten <rex.whitten@gmail.com>"
+  ],
+  "description": "3d client based on ",
+  "main": [
+    "./js/game/game.cannon.js",
+    "./js/game/game.core.js",
+    "./js/game/game.core.demo1.js",
+    "./js/game/game.events.js",
+    "./js/game/game.helpers.js",
+    "./js/game/game.models.js",
+    "./js/game/game.models.async.js",
+    "./js/game/game.static.js",
+    "./js/game/game.three.js",
+    "./js/game/game.ui.js"
+  ],
+  "ignore": [],
+  "license": "MIT"
+}
