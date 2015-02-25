@@ -45,6 +45,7 @@ window.game.ui = function() {
 			_ui.elements[element].className = _ui.elements[element].className + " " + className;
 		},
 		removeClass: function (element, className) {
+           
 			// Removes a class from a specified element
 			var classNameRegEx = new RegExp("\\s\\b" + className + "\\b", "gi");
 			_ui.elements[element].className = _ui.elements[element].className.replace(classNameRegEx, "");

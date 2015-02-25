@@ -1,7 +1,7 @@
 /*
- * Game Core - Demo 2 (Movable rigid body boxes)
+ * Game Core - Demo 1 (Simple demo)
  *
- * An example that demonstrates rigid bodies that can be pushed away by the player (same as game.core.demo1.js but _game.level.create() has changed)
+ * A simple example with basic controls (see _game.core.js for an uncommented version of this file)
  */
 
 window.game = window.game || {};
@@ -262,64 +262,11 @@ window.game.core = function () {
 					physicsMaterial: _cannon.solidMaterial
 				});
 
-				// Add movable rigid body (mass = 1)
+				// Add some boxes
 				_cannon.createRigidBody({
-					shape: new CANNON.Box(new CANNON.Vec3(20, 20, 20)),
-					mass: 1,
-					position: new CANNON.Vec3(-320, 0, 20),
-					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
-					physicsMaterial: _cannon.solidMaterial
-				});
-
-				// Add static rigid bodies (mass = 0)
-				_cannon.createRigidBody({
-					shape: new CANNON.Box(new CANNON.Vec3(20, 20, 20)),
+					shape: new CANNON.Box(new CANNON.Vec3(30, 30, 30)),
 					mass: 0,
-					position: new CANNON.Vec3(-80, -180, 90),
-					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
-					physicsMaterial: _cannon.solidMaterial
-				});
-
-				_cannon.createRigidBody({
-					shape: new CANNON.Box(new CANNON.Vec3(100, 100, 2)),
-					mass: 0,
-					position: new CANNON.Vec3(140, -420, 175),
-					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
-					physicsMaterial: _cannon.solidMaterial
-				});
-
-				// Add movable rigid body (mass = 1)
-				_cannon.createRigidBody({
-					shape: new CANNON.Box(new CANNON.Vec3(20, 20, 20)),
-					mass: 1,
-					position: new CANNON.Vec3(90, -420, 200),
-					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
-					physicsMaterial: _cannon.solidMaterial
-				});
-
-				// Add static rigid body (mass = 0)
-				_cannon.createRigidBody({
-					shape: new CANNON.Box(new CANNON.Vec3(45, 45, 5)),
-					mass: 0,
-					position: new CANNON.Vec3(400, -420, 285),
-					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
-					physicsMaterial: _cannon.solidMaterial
-				});
-
-				// Add movable rigid body (mass = 2)
-				_cannon.createRigidBody({
-					shape: new CANNON.Box(new CANNON.Vec3(10, 25, 230)),
-					mass: 2,
-					position: new CANNON.Vec3(402, -420, 520),
-					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
-					physicsMaterial: _cannon.solidMaterial
-				});
-
-				// Add static rigid bodies (mass = 0)
-				_cannon.createRigidBody({
-					shape: new CANNON.Box(new CANNON.Vec3(45, 45, 5)),
-					mass: 0,
-					position: new CANNON.Vec3(900, -420, 285),
+					position: new CANNON.Vec3(-240, -200, 30 - 1),
 					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
 					physicsMaterial: _cannon.solidMaterial
 				});
@@ -327,7 +274,31 @@ window.game.core = function () {
 				_cannon.createRigidBody({
 					shape: new CANNON.Box(new CANNON.Vec3(30, 30, 30)),
 					mass: 0,
-					position: new CANNON.Vec3(900, -110, 285),
+					position: new CANNON.Vec3(-300, -260, 90),
+					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
+					physicsMaterial: _cannon.solidMaterial
+				});
+
+				_cannon.createRigidBody({
+					shape: new CANNON.Box(new CANNON.Vec3(30, 30, 30)),
+					mass: 0,
+					position: new CANNON.Vec3(-180, -200, 150),
+					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
+					physicsMaterial: _cannon.solidMaterial
+				});
+
+				_cannon.createRigidBody({
+					shape: new CANNON.Box(new CANNON.Vec3(30, 30, 30)),
+					mass: 0,
+					position: new CANNON.Vec3(-120, -140, 210),
+					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
+					physicsMaterial: _cannon.solidMaterial
+				});
+
+				_cannon.createRigidBody({
+					shape: new CANNON.Box(new CANNON.Vec3(30, 30, 30)),
+					mass: 0,
+					position: new CANNON.Vec3(-60, -80, 270),
 					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
 					physicsMaterial: _cannon.solidMaterial
 				});
