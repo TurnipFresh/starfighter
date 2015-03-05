@@ -11,7 +11,8 @@ window.game.core = function () {
 		// Attributes
 		player: {
 			// Attributes
-
+		    name: "",
+            email: "",
 			// Player entity including mesh and rigid body
 			model: null,
 			mesh: null,
@@ -65,6 +66,7 @@ window.game.core = function () {
 			cameraOffsetH: 240,
 			cameraOffsetV: 140,
 
+            // Load 
 			// Keyboard configuration for game.events.js (controlKeys must be associated to game.events.keyboard.keyCodes)
 			controlKeys: {
 				forward: "w",

@@ -190,9 +190,10 @@ window.game.core = function () {
 			create: function() {
 				_cannon.solidMaterial = _cannon.createPhysicsMaterial(new CANNON.Material("solidMaterial"), 0, 0.1);
 
-				var floorSize = 800;
+				var floorSize = 8000;
 				var floorHeight = 20;
 
+                /*
 				_cannon.createRigidBody({
 					shape: new CANNON.Box(new CANNON.Vec3(floorSize, floorSize, floorHeight)),
 					mass: 0,
@@ -240,8 +241,10 @@ window.game.core = function () {
 					meshMaterial: new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan }),
 					physicsMaterial: _cannon.solidMaterial
 				});
+                */
 
-				var grid = new THREE.GridHelper(floorSize, floorSize / 10);
+				var grid = new THREE.GridHelper(floorSize * 10, (floorSize * 100) / 10);
+              
 				grid.position.z = 0.5;
 				grid.rotation.x = window.game.helpers.degToRad(90);
 				_three.scene.add(grid);
