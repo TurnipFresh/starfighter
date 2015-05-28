@@ -1,0 +1,96 @@
+[Encoding]
+InputEncoding=UTF-8
+
+[WFClient]
+Version=2
+RemoveICAFile=On
+
+ProxyFavorIEConnectionSetting=Yes
+ProxyTimeout=30000
+ProxyType=Auto
+ProxyUseFQDN=Off
+TransparentKeyPassthrough=FullScreenOnly
+TransportReconnectEnabled=On
+VSLAllowed=On
+VirtualCOMPortEmulation=Off
+ 
+[ApplicationServers]
+Win 7 Enterprise=
+ 
+[Win 7 Enterprise]
+Address=;40;STA13F871CC5F8;O0K75KCRFNG440070OLEE9S33V595MV
+InitialProgram=#Win 7 Enterprise
+
+ConnectionBar=1
+
+ClientAudio=On
+AudioBandwidthLimit=0
+UseDefaultSound=On
+DefaultSoundType=1
+Compress=On
+AutologonAllowed=On
+BrowserProtocol=HTTPonTCP
+DesiredWintype=5
+DesiredHRES=4294967295
+DesiredVRES=4294967295
+DesiredColor=8
+FontSmoothingType=0
+LaunchReference=781080587351877069523873693322
+Launcher=Custom
+LogonTicket=780189483073487161582504253734
+LogonTicketType=CTXS1
+SFRAllowed=Off
+TWIMode=Off
+TransportDriver=TCP/IP
+WinStationDriver=ICA 3.0
+Username=rwhitten
+Password=
+ClearPassword=78018948307348
+Domain=\7161582504253734
+ScreenPercent=0
+UseLocalUserAndPassword=1
+SSOnUserSetting=1
+EncryptionLevelSession=EncRC5-128
+
+; control access to peripherals attached to the end-point device running ica client
+; printers
+CPMAllowed=1
+
+; serial ports
+COMAllowed=1
+
+; smartcard
+
+
+; disk drives
+CDMAllowed=1
+
+; SSL Gateway
+SSLEnable=On
+SSLCiphers=all
+SSLProxyHost=connect.acrowire.com:443
+LocHttpBrowserAddress=!
+DoNotUseDefaultCSL=On
+CGPSecurityTicket=On
+Title=Win 7 Enterprise
+
+
+[Compress]
+DriverNameWin16=pdcompw.dll
+DriverNameWin32=pdcompn.dll
+
+[EncRC5-0]
+DriverNameWin16=pdc0w.dll
+DriverNameWin32=pdc0n.dll
+
+[EncRC5-128]
+DriverNameWin16=pdc128w.dll
+DriverNameWin32=pdc128n.dll
+
+[EncRC5-40]
+DriverNameWin16=pdc40w.dll
+DriverNameWin32=pdc40n.dll
+
+[EncRC5-56]
+DriverNameWin16=pdc56w.dll
+DriverNameWin32=pdc56n.dll
