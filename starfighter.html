@@ -1,0 +1,119 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <title>THREE.BasicThirdPersonGame - Demo 1</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link href="style/animate.min.css" rel="stylesheet" />
+    <style type="text/css">
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000000;
+            color: #ffffff;
+            
+            background: -moz-linear-gradient(top, #222326 0%, #000000 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#222326), color-stop(100%,#000000)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #222326 0%,#000000 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #222326 0%,#000000 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, #222326 0%,#000000 100%); /* IE10+ */
+            background: linear-gradient(to bottom, #222326 0%,#000000 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#222326', endColorstr='#000000',GradientType=0 ); /* IE6-9 */
+            background-image: url('http://khongthe.com/wallpapers/space/star-field-223247.jpg');
+        }
+
+        .infobox {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            width: 600px;
+            height: 320px;
+            padding: 10px 30px;
+            margin: 0 0 0 -300px;
+            background: #000000;
+            box-sizing: border-box;
+            border: 1px solid #b6ff00;
+            border-radius: 32px;
+        }
+
+        .fade-out {
+            opacity:0;
+            transition:opacity 2000ms;
+            -webkit-transition:opacity 2000ms;
+        }
+
+        .hidden {
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="game"></div>
+    <!-- View Container -->
+    <div id="infobox-intro" class="infobox">
+        <h2>Title</h2>
+        <div>d
+            <div>info</div>
+        </div>
+        <div>
+            <button>Start</button>
+            <button>Start</button>
+            <button>Start</button>
+            <button>Start</button>
+            <button>Start</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="js/libs/stats.min.js"></script>
+
+    <script src="js/libs/detector.js"></script>
+    <script src="js/libs/three.js"></script>
+    <script src="js/libs/cannon.js"></script>
+
+    <script src="js/game/game.static.js"></script>
+    <script src="js/game/game.three.js"></script>
+    <script src="js/game/game.cannon.js"></script>
+    <script src="js/game/game.events.js"></script>
+    <script src="js/game/game.helpers.js"></script>
+    <script src="js/game/game.ui.js"></script>
+    <script src="js/game/game.core.starfighter.js"></script>
+    <script src="js/game/game.models.js"></script>
+
+    <script>
+        if (!Detector.webgl) {
+            Detector.addGetWebGLMessage();
+        } else {
+            window.gameInstance = window.game.core();
+            window.gameInstance.init({
+                domContainer: document.querySelector("#game"),
+                rendererClearColor: window.game.static.white
+            });
+        }
+
+        // STATS VIA MONKEY PATCH
+        (function () {
+            var gameLoop = window.gameInstance.loop;
+            var stats = new Stats();
+
+            stats.domElement.style.position = "absolute";
+            stats.domElement.style.left = "0px";
+            stats.domElement.style.top = "0px";
+
+            document.body.appendChild(stats.domElement);
+
+            $('#game').addClass("animated fadeIn");
+
+            window.gameInstance.loop = function () {
+                stats.begin();
+                gameLoop();
+                stats.end();
+            }
+        })();
+    </script>
+</body>
+</html>
