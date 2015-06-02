@@ -1914,10 +1914,7 @@ THREE.Vector3.prototype = {
 
 			if ( matrix === undefined ) matrix = new THREE.Matrix4();
 
-			if (game === undefined) { console.log("games not here man"); }
-			if (camera !== undefined) {
-			    matrix.multiplyMatrices(camera.matrixWorld, matrix.getInverse(camera.projectionMatrix));
-			}
+			matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
 			return this.applyProjection( matrix );
 
 		};

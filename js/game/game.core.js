@@ -1,3 +1,4 @@
+/// <reference path="_references.js" />
 /*
  * Game Core - Demo 1 (Simple demo)
  *
@@ -320,6 +321,10 @@ window.game.core = function () {
 		player: window.game.helpers.cloneObject(_game.player),
 		level: window.game.helpers.cloneObject(_game.level)
 	};
+
+    // mouse events
+	$('#game').on("click")
+
 
 	return _game;
 };

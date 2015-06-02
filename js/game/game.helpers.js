@@ -6,7 +6,7 @@
 
 window.game = window.game || {};
 
-window.game.helpers = {
+var __helpers = {
 	// Convert from polar coordinates to Cartesian coordinates using length and radian
 	polarToCartesian: function(vectorLength, vectorDirection) {
 		return {
@@ -65,3 +65,5 @@ window.game.helpers = {
 		}
 	}
 };
+
+window.game.helpers = __helpers;

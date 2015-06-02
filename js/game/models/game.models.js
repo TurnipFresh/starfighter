@@ -63,6 +63,6 @@ window.game.base_model = {
         "bones": [],
         "skinIndices": [],
         "skinWeights": [],
-        "animation": {}
+        "animation": {},
     }
 };

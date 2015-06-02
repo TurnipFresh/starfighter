@@ -1,3 +1,4 @@
+/// <reference path="_references.js" />
 /*
  * Game Events
  *
@@ -6,7 +7,7 @@
 
 window.game = window.game || {};
 
-window.game.events = function() {
+var __events = function() {
 	var _events = {
 		// Attributes
 		keyboard: {
@@ -37,12 +38,51 @@ window.game.events = function() {
 				_events.keyboard.pressed[_events.keyboard.keyCodes[event.keyCode]] = false;
 			}
 		},
+		mouse: {
+		    click: function (event) {
+		        event.preventDefault();
+		        //projector.unprojectVector(vector, camera);
+		        console.log(event);
 
+		        var vector = new THREE.Vector3(
+                                           (event.clientX / window.innerWidth) * 2 - 1,
+                                         -(event.clientY / window.innerHeight) * 2 + 1,
+                                           0.5
+                                       );
+		        game.three.projector = new THREE.Projector();
+		        game.three.projector.unprojectVector(vector, game.three.camera);
+
+		        if (game.camera !== undefined) {
+		            var ray = new THREE.Ray(game.three.camera.position,
+                                 vector.subSelf(game.three.camera.position).normalize());
+
+		            var intersects = ray.intersectObjects(objects);
+
+		            if (intersects.length > 0) {
+
+		                intersects[0].object.materials[0].color.setHex(Math.random() * 0xffffff);
+
+		                var particle = new THREE.Particle(particleMaterial);
+		                particle.position = intersects[0].point;
+		                particle.scale.x = particle.scale.y = 8;
+		                game.three.scene.add(particle);
+
+		                // Parse all the faces
+		                for (var i in intersects) {
+		                    intersects[i].face.material[0].color
+                                .setHex(Math.random() * 0xffffff | 0x80000000);
+		                }
+		            }
+		        }
+
+		    }
+		},
 		// Methods
 		init: function() {
 			// Add the listeners
 			document.addEventListener("keydown", _events.keyboard.onKeyDown, false);
 			document.addEventListener("keyup", _events.keyboard.onKeyUp, false);
+			document.addEventListener('mousedown', _events.mouse.click,  false);
 		},
 		onKeyDown: function() {
 			// No specific actions by default
@@ -51,3 +91,5 @@ window.game.events = function() {
 
 	return _events;
 };
+
+window.game.events = new __events();

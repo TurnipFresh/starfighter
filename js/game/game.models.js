@@ -1,3 +1,4 @@
+/// <reference path="_references.js" />
 /*
  * Game Models
  *
@@ -6,7 +7,252 @@
 
 window.game = window.game || {};
 
-window.game.models = {
+
+var _player_model = function () {
+    var self = {};
+    // Attributes
+    // Player entity including mesh and rigid body
+    self.model = null,
+    self.mesh = null,
+    self.shape = null,
+    self.rigidBody=  null,
+    // Player mass which affects other rigid bodies in the world
+    self.mass = 3;
+    // HingeConstraint to limit player's air-twisting
+    self.orientationConstraint = null;
+
+    // Jump flags
+    self.isGrounded = false;
+    self.jumpHeight = 38;
+
+    // Configuration for player speed (acceleration and maximum speed)
+    self.speed = 1.5;
+    self.speedMax = 45;
+    // Configuration for player rotation (rotation acceleration and maximum rotation speed)
+    self.rotationSpeed = 0.007;
+    self.rotationSpeedMax = 0.04;
+    // Rotation values
+    self.rotationRadians = new THREE.Vector3(0, 0, 0);
+    self.rotationAngleX = null;
+    self.rotationAngleY = null;
+    // Damping which means deceleration	(values between 0.8 and 0.98 are recommended)
+    self.damping = 0.9;
+    // Damping or easing for player rotation
+    self.rotationDamping=  0.8;
+    // Acceleration values
+    self.acceleration = 0;
+    self.rotationAcceleration = 0,
+    // Enum for an easier method access to acceleration/rotation
+    self.playerAccelerationValues = {
+        position: {
+            acceleration: "acceleration",
+            speed: "speed",
+            speedMax: "speedMax"
+        },
+        rotation: {
+            acceleration: "rotationAcceleration",
+            speed: "rotationSpeed",
+            speedMax: "rotationSpeedMax"
+        }
+    };
+
+    // Third-person camera configuration
+    self.playerCoords = null,
+    self.cameraCoords = null,
+    // Camera offsets behind the player (horizontally and vertically)
+    self.cameraOffsetH = 0,
+    self.cameraOffsetV = 400,
+    // Keyboard configuration for game.events.js (controlKeys must be associated to game.events.keyboard.keyCodes)
+    self.controlKeys = {
+        forward: "w",
+        backward: "s",
+        left: "a",
+        right: "d",
+        jump: "space"
+    };
+    // Methods
+    self.create = function () {
+       
+        
+        // Create a global physics material for the player which will be used as ContactMaterial for all other objects in the level
+        window.game.cannon.playerPhysicsMaterial = new CANNON.Material("playerMaterial");
+
+        // Create a player character based on an imported 3D model that was already loaded as JSON into game.models.player
+        self.model = window.game.three.createModel(window.game.models.player, 12, [
+            new THREE.MeshLambertMaterial({ color: window.game.static.colors.cyan, shading: THREE.FlatShading }),
+            new THREE.MeshLambertMaterial({ color: window.game.static.colors.green, shading: THREE.FlatShading })
+        ]);
+
+        // Create the shape, mesh and rigid body for the player character and assign the physics material to it
+        self.shape = new CANNON.Box(self.model.halfExtents);
+        self.rigidBody = new CANNON.RigidBody(self.mass, self.shape, window.game.cannon.createPhysicsMaterial(window.game.cannon.playerPhysicsMaterial));
+        self.rigidBody.position.set(0, 0, 50);
+        self.mesh = window.game.cannon.addVisual(self.rigidBody, null, self.model.mesh);
+
+        // Create a HingeConstraint to limit player's air-twisting - this needs improvement
+        self.orientationConstraint = new CANNON.HingeConstraint(self.rigidBody, new CANNON.Vec3(0, 0, 0), new CANNON.Vec3(0, 0, 1), self.rigidBody, new CANNON.Vec3(0, 0, 1), new CANNON.Vec3(0, 0, 1));
+        window.game.cannon.world.addConstraint(self.orientationConstraint);
+
+        self.rigidBody.postStep = function () {
+            // Reset player's angularVelocity to limit possible exceeding rotation and
+            self.rigidBody.angularVelocity.z = 0;
+
+            // update player's orientation afterwards
+            self.updateOrientation();
+        };
+
+        // Collision event listener for the jump mechanism
+        self.rigidBody.addEventListener("collide", function (event) {
+            // Checks if player's is on ground
+            if (!self.isGrounded) {
+                // Ray intersection test to check if player is colliding with an object beneath him
+                self.isGrounded = (new CANNON.Ray(self.mesh.position, new CANNON.Vec3(0, 0, -1)).intersectBody(event.contact.bi).length > 0);
+            }
+        });
+    }
+
+    self.update = function () {
+        // Basic game logic to update player and camera
+        self.processUserInput();
+        self.accelerate();
+        self.rotate();
+        self.updateCamera();
+
+        // Level-specific logic
+        self.checkGameOver();
+    }
+
+    self.updateCamera = function () {
+        // Calculate camera coordinates by using Euler radians from player's last rotation
+        self.cameraCoords = window.game.helpers.polarToCartesian(self.cameraOffsetH, self.rotationRadians.z);
+
+        // Apply camera coordinates to camera position
+        window.game.three.camera.position.x = self.mesh.position.x + self.cameraCoords.x;
+        window.game.three.camera.position.y = self.mesh.position.y + self.cameraCoords.y;
+        window.game.three.camera.position.z = self.mesh.position.z + self.cameraOffsetV;
+
+        // Place camera focus on player mesh
+        window.game.three.camera.lookAt(self.mesh.position);
+    }
+
+    self.updateAcceleration = function (values, direction) {
+        // Distinguish between acceleration/rotation and forward/right (1) and backward/left (-1)
+        if (direction === 1) {
+            // Forward/right
+            if (self[values.acceleration] > -self[values.speedMax]) {
+                if (self[values.acceleration] >= self[values.speedMax] / 2) {
+                    self[values.acceleration] = -(self[values.speedMax] / 4);
+                } else {
+                    self[values.acceleration] -= self[values.speed];
+                }
+            } else {
+                self[values.acceleration] = -self[values.speedMax];
+            }
+        } else {
+            // Backward/left
+            if (self[values.acceleration] < self[values.speedMax]) {
+                if (self[values.acceleration] <= -(self[values.speedMax] / 2)) {
+                    self[values.acceleration] = self[values.speedMax] / 4;
+                } else {
+                    self[values.acceleration] += self[values.speed];
+                }
+            } else {
+                self[values.acceleration] = self[values.speedMax];
+            }
+        }
+    }
+
+    self.processUserInput = function () {
+        // Jump
+        if (window.game.events.keyboard.pressed[self.controlKeys.jump]) {
+            self.jump();
+        }
+
+        // Movement: forward, backward, left, right
+        if (window.game.events.keyboard.pressed[self.controlKeys.forward]) {
+            self.updateAcceleration(self.playerAccelerationValues.position, 1);
+
+            // Reset orientation in air
+            if (!window.game.cannon.getCollisions(self.rigidBody.index)) {
+                self.rigidBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), self.rotationRadians.z);
+            }
+        }
+
+        if (window.game.events.keyboard.pressed[self.controlKeys.backward]) {
+            self.updateAcceleration(self.playerAccelerationValues.position, -1);
+        }
+
+        if (window.game.events.keyboard.pressed[self.controlKeys.right]) {
+            self.updateAcceleration(self.playerAccelerationValues.rotation, 1);
+        }
+
+        if (window.game.events.keyboard.pressed[self.controlKeys.left]) {
+            self.updateAcceleration(self.playerAccelerationValues.rotation, -1);
+        }
+    }
+
+    self.accelerate = function () {
+        // Calculate player coordinates by using current acceleration Euler radians from player's last rotation
+        self.playerCoords = window.game.helpers.polarToCartesian(self.acceleration, self.rotationRadians.z);
+
+        // Set actual XYZ velocity by using calculated Cartesian coordinates
+        self.rigidBody.velocity.set(self.playerCoords.x, self.playerCoords.y, self.rigidBody.velocity.z);
+
+        // Damping
+        if (!window.game.events.keyboard.pressed[self.controlKeys.forward] && !window.game.events.keyboard.pressed[self.controlKeys.backward]) {
+            self.acceleration *= self.damping;
+        }
+    }
+
+    self.rotate = function () {
+        // Rotate player around Z axis
+        window.game.cannon.rotateOnAxis(self.rigidBody, new CANNON.Vec3(0, 0, 1), self.rotationAcceleration);
+
+        // Damping
+        if (!window.game.events.keyboard.pressed[self.controlKeys.left] && !window.game.events.keyboard.pressed[self.controlKeys.right]) {
+            self.rotationAcceleration *= self.rotationDamping;
+        }
+    }
+
+    self.jump = function () {
+        // Perform a jump if player has collisions and the collision contact is beneath him (ground)
+        if (window.game.cannon.getCollisions(self.rigidBody.index) && self.isGrounded) {
+            self.isGrounded = false;
+            self.rigidBody.velocity.z = self.jumpHeight;
+        }
+    }
+
+    self.updateOrientation = function () {
+        // Convert player's Quaternion to Euler radians and save them to self.rotationRadians
+        self.rotationRadians = new THREE.Euler().setFromQuaternion(self.rigidBody.quaternion);
+
+        // Round angles
+        self.rotationAngleX = Math.round(window.game.helpers.radToDeg(self.rotationRadians.x));
+        self.rotationAngleY = Math.round(window.game.helpers.radToDeg(self.rotationRadians.y));
+
+        // Prevent player from being upside-down on a slope - this needs improvement
+        if ((window.game.cannon.getCollisions(self.rigidBody.index) &&
+            ((self.rotationAngleX >= 90) ||
+                (self.rotationAngleX <= -90) ||
+                (self.rotationAngleY >= 90) ||
+                (self.rotationAngleY <= -90)))
+            ) {
+            // Reset orientation
+            self.rigidBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), self.rotationRadians.z);
+        }
+    };
+
+    self.checkGameOver = function () {
+        // Example game over mechanism which resets the game if the player is falling beneath -800
+        if (self.mesh.position.z <= -800) {
+            self.destroy();
+        }
+    }
+
+    return self;
+};
+
+var __models = {
 	player: {
 		"metadata" :
 		{
@@ -66,3 +312,5 @@ window.game.models = {
 		"animation" : {}
 	}
 };
+
+window.game.models = __models;

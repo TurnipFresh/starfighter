@@ -6,7 +6,7 @@
 
 window.game = window.game || {};
 
-window.game.cannon = function() {
+var __cannon = function() {
 	var _cannon = {
 		// Attributes
 
@@ -368,3 +368,5 @@ window.game.cannon = function() {
 
 	return _cannon;
 };
+
+window.game.cannon = new __cannon();
